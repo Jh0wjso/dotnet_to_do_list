@@ -3,11 +3,13 @@ using ToDoList.Api.Data;
 using ToDoList.Api.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ToDoList.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class TaskListController : ControllerBase
     {
         private readonly AppDbContext _context;

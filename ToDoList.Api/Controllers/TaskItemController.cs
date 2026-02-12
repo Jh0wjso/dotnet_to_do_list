@@ -3,11 +3,13 @@ using ToDoList.Api.Data;
 using ToDoList.Api.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ToDoList.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class TaskItemController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -31,7 +33,7 @@ namespace ToDoList.Api.Controllers
         {
             var taskItem = await _context.TaskItems.FindAsync(id);
             if (taskItem == null) return NotFound();
-            
+
             return Ok(new TaskItemDTO { Id = taskItem.Id, Description = taskItem.Description, Status = taskItem.Status, TaskListId = taskItem.TaskListId });
         }
 
@@ -44,7 +46,7 @@ namespace ToDoList.Api.Controllers
             var taskItem = new TaskItem { Description = dto.Description, TaskListId = dto.TaskListId };
             _context.TaskItems.Add(taskItem);
             await _context.SaveChangesAsync();
-            
+
             return CreatedAtAction(nameof(GetTaskItem), new { id = taskItem.Id }, new TaskItemDTO { Id = taskItem.Id, Description = taskItem.Description, Status = taskItem.Status, TaskListId = taskItem.TaskListId });
         }
 
@@ -53,11 +55,11 @@ namespace ToDoList.Api.Controllers
         {
             var taskItem = await _context.TaskItems.FindAsync(id);
             if (taskItem == null) return NotFound();
-            
+
             taskItem.Description = dto.Description;
             taskItem.Status = dto.Status;
             await _context.SaveChangesAsync();
-            
+
             return NoContent();
         }
 
@@ -66,10 +68,10 @@ namespace ToDoList.Api.Controllers
         {
             var taskItem = await _context.TaskItems.FindAsync(id);
             if (taskItem == null) return NotFound();
-            
+
             _context.TaskItems.Remove(taskItem);
             await _context.SaveChangesAsync();
-            
+
             return NoContent();
         }
     }
