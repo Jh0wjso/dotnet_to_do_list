@@ -1,4 +1,6 @@
 obj/
 bin/
 app.db
+app.db-shm
+app.db-wal
 .env
