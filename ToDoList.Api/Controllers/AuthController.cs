@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Text;
 using ToDoList.Api.Models;
 using Microsoft.AspNetCore.Authorization;
+using ToDoList.Api.Services;
 
 namespace ToDoList.Api.Controllers
 {
@@ -17,17 +18,19 @@ namespace ToDoList.Api.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IEmailConfirmationService _emailConfirmationService;
 
-        public AuthController(AppDbContext context, IConfiguration configuration)
+        public AuthController(AppDbContext context, IConfiguration configuration, IEmailConfirmationService emailConfirmationService)
         {
             _context = context;
             _configuration = configuration;
+            _emailConfirmationService = emailConfirmationService;
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<LoginResponseDTO>> Login(LoginDTO dto)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
+            var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == dto.Email);
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
                 return Unauthorized("Invalid credentials");
 
@@ -36,7 +39,7 @@ namespace ToDoList.Api.Controllers
             return Ok(new LoginResponseDTO
             {
                 Token = token,
-                User = new UserDTO { Id = user.Id, Name = user.Name, Email = user.Email }
+                User = new UserDTO { Id = user.Id, Name = user.Name, Email = user.Email, IsEmailConfirmed = user.IsEmailConfirmed }
             });
         }
 
@@ -59,13 +62,39 @@ namespace ToDoList.Api.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
+            await _emailConfirmationService.GenerateConfirmationTokenAsync(user.Id);
+
             var token = GenerateJwtToken(user);
 
             return Ok(new SignUpResponseDTO
             {
                 Token = token,
-                User = new UserDTO { Id = user.Id, Name = user.Name, Email = user.Email }
+                User = new UserDTO { Id = user.Id, Name = user.Name, Email = user.Email, IsEmailConfirmed = user.IsEmailConfirmed }
             });
+        }
+
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail([FromQuery] string token)
+        {
+            var result = await _emailConfirmationService.ConfirmEmailAsync(token);
+            if (!result)
+                return BadRequest("Token inválido ou expirado");
+
+            return Ok("Email confirmado com sucesso!");
+        }
+
+        [HttpPost("resend-confirmation")]
+        public async Task<IActionResult> ResendConfirmation([FromBody] string email)
+        {
+            try
+            {
+                await _emailConfirmationService.ResendConfirmationEmailAsync(email);
+                return Ok("Email de confirmação reenviado");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         private string GenerateJwtToken(User user)
