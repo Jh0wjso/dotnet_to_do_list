@@ -7,6 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using ToDoList.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ToDoList.Api.Controllers
 {
@@ -30,7 +31,7 @@ namespace ToDoList.Api.Controllers
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
                 return Unauthorized("Invalid credentials");
 
-            var token = GenerateJwtToken(user.Id, user.Email);
+            var token = GenerateJwtToken(user);
 
             return Ok(new LoginResponseDTO
             {
@@ -58,7 +59,7 @@ namespace ToDoList.Api.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            var token = GenerateJwtToken(user.Id, user.Email);
+            var token = GenerateJwtToken(user);
 
             return Ok(new SignUpResponseDTO
             {
@@ -67,15 +68,15 @@ namespace ToDoList.Api.Controllers
             });
         }
 
-        private string GenerateJwtToken(int userId, string email)
+        private string GenerateJwtToken(User user)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
-                new Claim(ClaimTypes.Email, email)
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email)
             };
 
             var token = new JwtSecurityToken(
