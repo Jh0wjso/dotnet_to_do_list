@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Mail;
+using System.Web;
 
 namespace ToDoList.Api.Services
 {
@@ -21,7 +22,7 @@ namespace ToDoList.Api.Services
             var fromEmail = Environment.GetEnvironmentVariable("GMAIL_USER") ?? _configuration["Email:FromEmail"];
             var appUrl = Environment.GetEnvironmentVariable("APP_URL") ?? _configuration["Email:AppUrl"];
 
-            var confirmationUrl = $"{appUrl}/api/auth/confirm-email?token={token}";
+            var confirmationUrl = $"{appUrl}/api/auth/confirm-email?token={Uri.EscapeDataString(token)}";
 
             using var client = new SmtpClient(smtpHost, smtpPort)
             {
