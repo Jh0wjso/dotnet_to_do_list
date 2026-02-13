@@ -1,4 +1,4 @@
-.PHONY: setup-backend setup-frontend start-backend start-frontend start-app
+.PHONY: setup-backend setup-frontend start-backend start-frontend start-app kill-ports
 
 setup-backend:
 	@echo "Setting up backend..."
@@ -9,6 +9,11 @@ setup-frontend:
 	@echo "Setting up frontend..."
 	cd App && npm install
 
+kill-ports:
+	@echo "Killing processes on ports 5197 and 5173..."
+	@-fuser -k 5197/tcp 2>/dev/null || true
+	@-fuser -k 5173/tcp 2>/dev/null || true
+
 start-backend:
 	@echo "Starting backend..."
 	cd ToDoList.Api && dotnet run
@@ -17,6 +22,6 @@ start-frontend:
 	@echo "Starting frontend..."
 	cd App && npm run dev
 
-start-app:
+start-app: kill-ports
 	@echo "Starting application..."
 	@make start-backend & make start-frontend
