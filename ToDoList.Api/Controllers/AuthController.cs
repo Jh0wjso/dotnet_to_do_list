@@ -80,7 +80,8 @@ namespace ToDoList.Api.Controllers
             if (!result)
                 return BadRequest("Token inválido ou expirado");
 
-            return Ok("Email confirmado com sucesso!");
+            await Task.Delay(1000);
+            return Redirect($"{_configuration["APP_URL"]}/login");
         }
 
         [HttpPost("resend-confirmation")]
