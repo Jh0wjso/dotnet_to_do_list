@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { UserPlus } from "lucide-react";
+import { AuthApi } from "@/services/authApi";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -17,7 +18,7 @@ const Signup = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     if (password !== confirmPassword) {
@@ -26,9 +27,10 @@ const Signup = () => {
     }
     setLoading(true);
     try {
-      const res = authApi.signup({ email, password, confirmPassword });
+      const res = await AuthApi.signup({ email, password, confirmPassword });
       login(res.token, res.user);
       navigate(`/confirm-email?email=${encodeURIComponent(email)}`);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message);
     } finally {
