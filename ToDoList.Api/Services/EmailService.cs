@@ -20,9 +20,9 @@ namespace ToDoList.Api.Services
             var smtpUser = Environment.GetEnvironmentVariable("GMAIL_USER") ?? _configuration["Email:SmtpUser"];
             var smtpPass = Environment.GetEnvironmentVariable("GMAIL_APP_PASSWORD") ?? _configuration["Email:SmtpPass"];
             var fromEmail = Environment.GetEnvironmentVariable("GMAIL_USER") ?? _configuration["Email:FromEmail"];
-            var appUrl = Environment.GetEnvironmentVariable("APP_URL") ?? _configuration["Email:AppUrl"];
+            var apiUrl = Environment.GetEnvironmentVariable("API_URL") ?? _configuration["Email:ApiUrl"];
 
-            var confirmationUrl = $"{appUrl}/api/auth/confirm-email?token={Uri.EscapeDataString(token)}";
+            var confirmationUrl = $"{apiUrl}/api/auth/confirm-email?token={Uri.EscapeDataString(token)}";
 
             using var client = new SmtpClient(smtpHost, smtpPort)
             {
@@ -30,13 +30,30 @@ namespace ToDoList.Api.Services
                 EnableSsl = true
             };
 
+            var body = $@"
+                Olá {name},
+
+                Obrigado por criar sua conta no ToDoList!
+
+                Para ativar sua conta, confirme seu endereço de e-mail clicando no link abaixo:
+                {confirmationUrl}
+
+                Por motivos de segurança, este link expira em 24 horas.
+
+                Se você não solicitou este cadastro, pode ignorar esta mensagem.
+
+                Atenciosamente,
+                Equipe ToDoList
+            "; 
+
             var mailMessage = new MailMessage
             {
                 From = new MailAddress(fromEmail!),
-                Subject = "Confirme seu email - ToDoList",
-                Body = $"Olá {name},\n\nClique no link abaixo para confirmar seu email:\n{confirmationUrl}\n\nEste link expira em 24 horas.",
+                Subject = "Confirme seu e-mail — ToDoList",
+                Body = body.Trim(),
                 IsBodyHtml = false
             };
+
 
             mailMessage.To.Add(email);
 
