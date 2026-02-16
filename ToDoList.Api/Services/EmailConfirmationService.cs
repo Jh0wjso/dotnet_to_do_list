@@ -18,7 +18,7 @@ namespace ToDoList.Api.Services
         public async Task<string> GenerateConfirmationTokenAsync(int userId)
         {
             var user = await _context.Users.FindAsync(userId);
-            if (user == null) throw new Exception("Usuário não encontrado");
+            if (user == null) throw new Exception("User not found");
 
             var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
             user.EmailConfirmationToken = token;
@@ -48,8 +48,8 @@ namespace ToDoList.Api.Services
         public async Task ResendConfirmationEmailAsync(string email)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-            if (user == null) throw new Exception("Usuário não encontrado");
-            if (user.IsEmailConfirmed) throw new Exception("Email já confirmado");
+            if (user == null) throw new Exception("User not found");
+            if (user.IsEmailConfirmed) throw new Exception("Email already confirmed");
 
             await GenerateConfirmationTokenAsync(user.Id);
         }

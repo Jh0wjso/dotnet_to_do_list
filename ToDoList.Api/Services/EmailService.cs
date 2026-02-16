@@ -31,25 +31,25 @@ namespace ToDoList.Api.Services
             };
 
             var body = $@"
-                Olá {name},
+                Hello {name},
 
-                Obrigado por criar sua conta no ToDoList!
+                Thank you for creating your account on ToDoList!
 
-                Para ativar sua conta, confirme seu endereço de e-mail clicando no link abaixo:
+                To activate your account, confirm your email address by clicking the link below:
                 {confirmationUrl}
 
-                Por motivos de segurança, este link expira em 24 horas.
+                For security reasons, this link expires in 24 hours.
 
-                Se você não solicitou este cadastro, pode ignorar esta mensagem.
+                If you did not request this registration, you can ignore this message.
 
-                Atenciosamente,
-                Equipe ToDoList
+                Best regards,
+                ToDoList Team
             "; 
 
             var mailMessage = new MailMessage
             {
                 From = new MailAddress(fromEmail!),
-                Subject = "Confirme seu e-mail — ToDoList",
+                Subject = "Confirm your email — ToDoList",
                 Body = body.Trim(),
                 IsBodyHtml = false
             };

@@ -78,7 +78,7 @@ namespace ToDoList.Api.Controllers
         {
             var result = await _emailConfirmationService.ConfirmEmailAsync(token);
             if (!result)
-                return BadRequest("Token inválido ou expirado");
+                return BadRequest("Invalid or expired token");
 
             await Task.Delay(1000);
             return Redirect($"{_configuration["APP_URL"]}/login");
@@ -90,7 +90,7 @@ namespace ToDoList.Api.Controllers
             try
             {
                 await _emailConfirmationService.ResendConfirmationEmailAsync(email);
-                return Ok("Email de confirmação reenviado");
+                return Ok("Confirmation email resent");
             }
             catch (Exception ex)
             {
