@@ -7,7 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Plus, Trash2, Edit3, Check, X, LogOut, ListTodo, ChevronRight,
+  Plus,
+  Trash2,
+  Edit3,
+  Check,
+  X,
+  LogOut,
+  ListTodo,
+  ChevronRight,
 } from "lucide-react";
 
 const Dashboard = () => {
@@ -50,7 +57,8 @@ const Dashboard = () => {
   };
 
   const refreshItems = () => {
-    if (selectedListId !== null) setItems(taskItemApi.getByListId(selectedListId));
+    if (selectedListId !== null)
+      setItems(taskItemApi.getByListId(selectedListId));
   };
 
   // List CRUD
@@ -77,20 +85,29 @@ const Dashboard = () => {
   // Item CRUD
   const addItem = () => {
     if (!newItemDesc.trim() || selectedListId === null) return;
-    taskItemApi.create({ description: newItemDesc.trim(), taskListId: selectedListId });
+    taskItemApi.create({
+      description: newItemDesc.trim(),
+      taskListId: selectedListId,
+    });
     setNewItemDesc("");
     refreshItems();
   };
 
   const toggleItem = (item: TaskItem) => {
-    taskItemApi.update(item.id, { description: item.description, status: item.status === 0 ? 1 : 0 });
+    taskItemApi.update(item.id, {
+      description: item.description,
+      status: item.status === 0 ? 1 : 0,
+    });
     refreshItems();
   };
 
   const saveItemDesc = (id: number) => {
     const item = items.find((i) => i.id === id);
     if (!item || !editingItemDesc.trim()) return;
-    taskItemApi.update(id, { description: editingItemDesc.trim(), status: item.status });
+    taskItemApi.update(id, {
+      description: editingItemDesc.trim(),
+      status: item.status,
+    });
     setEditingItemId(null);
     refreshItems();
   };
@@ -98,6 +115,13 @@ const Dashboard = () => {
   const deleteItem = (id: number) => {
     taskItemApi.delete(id);
     refreshItems();
+  };
+
+  const handleLogout = () => {
+    logout();
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   };
 
   const selectedList = lists.find((l) => l.id === selectedListId);
@@ -108,11 +132,19 @@ const Dashboard = () => {
       <header className="flex h-14 shrink-0 items-center justify-between border-b border-border/50 bg-card/60 px-6 backdrop-blur">
         <div className="flex items-center gap-2">
           <ListTodo className="h-5 w-5 text-primary" />
-          <span className="font-mono text-sm font-semibold tracking-wide">ToDo List</span>
+          <span className="font-mono text-sm font-semibold tracking-wide">
+            ToDo List
+          </span>
         </div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-muted-foreground">{user?.name}</span>
-          <Button variant="ghost" size="sm" onClick={() => { logout(); navigate("/login"); }}>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              handleLogout();
+            }}
+          >
             <LogOut className="mr-1 h-4 w-4" /> Sair
           </Button>
         </div>
@@ -122,7 +154,9 @@ const Dashboard = () => {
         {/* Sidebar */}
         <aside className="flex w-64 shrink-0 flex-col border-r border-border/50 bg-sidebar">
           <div className="p-4">
-            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Listas</h2>
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Listas
+            </h2>
             <div className="flex gap-2">
               <Input
                 value={newListName}
@@ -153,31 +187,54 @@ const Dashboard = () => {
                     <Input
                       value={editingListName}
                       onChange={(e) => setEditingListName(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && saveListName(list.id)}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" && saveListName(list.id)
+                      }
                       className="h-6 bg-muted/50 text-sm"
                       autoFocus
                       onClick={(e) => e.stopPropagation()}
                     />
-                    <button onClick={(e) => { e.stopPropagation(); saveListName(list.id); }} className="text-primary hover:text-primary/80">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        saveListName(list.id);
+                      }}
+                      className="text-primary hover:text-primary/80"
+                    >
                       <Check className="h-3.5 w-3.5" />
                     </button>
-                    <button onClick={(e) => { e.stopPropagation(); setEditingListId(null); }} className="text-muted-foreground hover:text-foreground">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingListId(null);
+                      }}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
                       <X className="h-3.5 w-3.5" />
                     </button>
                   </div>
                 ) : (
                   <>
-                    <ChevronRight className={`mr-2 h-3.5 w-3.5 transition-transform ${selectedListId === list.id ? "rotate-90" : ""}`} />
+                    <ChevronRight
+                      className={`mr-2 h-3.5 w-3.5 transition-transform ${selectedListId === list.id ? "rotate-90" : ""}`}
+                    />
                     <span className="flex-1 truncate">{list.name}</span>
                     <div className="hidden gap-1 group-hover:flex">
                       <button
-                        onClick={(e) => { e.stopPropagation(); setEditingListId(list.id); setEditingListName(list.name); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingListId(list.id);
+                          setEditingListName(list.name);
+                        }}
                         className="text-muted-foreground hover:text-foreground"
                       >
                         <Edit3 className="h-3.5 w-3.5" />
                       </button>
                       <button
-                        onClick={(e) => { e.stopPropagation(); deleteList(list.id); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteList(list.id);
+                        }}
                         className="text-muted-foreground hover:text-destructive"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -213,7 +270,9 @@ const Dashboard = () => {
               {/* Items */}
               <div className="flex-1 space-y-2 overflow-y-auto">
                 {items.length === 0 && (
-                  <p className="py-8 text-center text-muted-foreground">Nenhuma tarefa nesta lista</p>
+                  <p className="py-8 text-center text-muted-foreground">
+                    Nenhuma tarefa nesta lista
+                  </p>
                 )}
                 {items.map((item) => (
                   <div
@@ -230,30 +289,46 @@ const Dashboard = () => {
                         <Input
                           value={editingItemDesc}
                           onChange={(e) => setEditingItemDesc(e.target.value)}
-                          onKeyDown={(e) => e.key === "Enter" && saveItemDesc(item.id)}
+                          onKeyDown={(e) =>
+                            e.key === "Enter" && saveItemDesc(item.id)
+                          }
                           className="h-8 bg-muted/50 text-sm"
                           autoFocus
                         />
-                        <button onClick={() => saveItemDesc(item.id)} className="text-primary hover:text-primary/80">
+                        <button
+                          onClick={() => saveItemDesc(item.id)}
+                          className="text-primary hover:text-primary/80"
+                        >
                           <Check className="h-4 w-4" />
                         </button>
-                        <button onClick={() => setEditingItemId(null)} className="text-muted-foreground hover:text-foreground">
+                        <button
+                          onClick={() => setEditingItemId(null)}
+                          className="text-muted-foreground hover:text-foreground"
+                        >
                           <X className="h-4 w-4" />
                         </button>
                       </div>
                     ) : (
                       <>
-                        <span className={`flex-1 text-sm ${item.status === 1 ? "text-muted-foreground line-through" : ""}`}>
+                        <span
+                          className={`flex-1 text-sm ${item.status === 1 ? "text-muted-foreground line-through" : ""}`}
+                        >
                           {item.description}
                         </span>
                         <div className="hidden gap-1 group-hover:flex">
                           <button
-                            onClick={() => { setEditingItemId(item.id); setEditingItemDesc(item.description); }}
+                            onClick={() => {
+                              setEditingItemId(item.id);
+                              setEditingItemDesc(item.description);
+                            }}
                             className="text-muted-foreground hover:text-foreground"
                           >
                             <Edit3 className="h-4 w-4" />
                           </button>
-                          <button onClick={() => deleteItem(item.id)} className="text-muted-foreground hover:text-destructive">
+                          <button
+                            onClick={() => deleteItem(item.id)}
+                            className="text-muted-foreground hover:text-destructive"
+                          >
                             <Trash2 className="h-4 w-4" />
                           </button>
                         </div>
@@ -265,7 +340,9 @@ const Dashboard = () => {
             </>
           ) : (
             <div className="flex flex-1 items-center justify-center">
-              <p className="text-muted-foreground">Selecione ou crie uma lista para começar</p>
+              <p className="text-muted-foreground">
+                Selecione ou crie uma lista para começar
+              </p>
             </div>
           )}
         </main>

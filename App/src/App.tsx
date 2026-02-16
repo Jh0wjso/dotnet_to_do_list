@@ -10,6 +10,10 @@ import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+const user = localStorage.getItem("todo_user");
+if (user) {
+  queryClient.setQueryData(["auth", "user"], JSON.parse(user));
+}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -19,10 +23,21 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/confirm-email" element={<ConfirmEmail />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route
+            path="/login"
+            element={user ? <Navigate to="/dashboard" replace /> : <Login />}
+          />
+          <Route
+            path="/signup"
+            element={user ? <Navigate to="/dashboard" replace /> : <Signup />}
+          />
+          <Route
+            path="/confirm-email"
+            element={
+              user ? <Navigate to="/dashboard" replace /> : <ConfirmEmail />
+            }
+          />
+          <Route path="/dashboard" element={!user ? <Navigate to="/login" replace /> : <Dashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

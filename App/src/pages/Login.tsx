@@ -10,12 +10,12 @@ import { LogIn } from "lucide-react";
 import { AuthApi } from "@/services/authApi";
 
 const Login = () => {
-  const [email, setEmail] = useState("joao@email.com");
-  const [password, setPassword] = useState("123456");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
   const { login } = useAuth();
+  const [refreshing, setRefreshing] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +24,10 @@ const Login = () => {
     try {
       const res = await AuthApi.login(email, password);
       login(res.token, res.user);
-      navigate("/dashboard");
+      setTimeout(() => {
+        setLoading(true);
+        window.location.reload();
+      }, 2000);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setError(err.message);
