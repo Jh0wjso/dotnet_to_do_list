@@ -18,7 +18,7 @@ const ConfirmEmail = () => {
 
   const handleResend = async () => {
     if (!email) {
-      setError("Informe o email para reenviar o link");
+      setError("Please provide an email to resend the link");
       return;
     }
     setError("");
@@ -26,7 +26,7 @@ const ConfirmEmail = () => {
     setResending(true);
     try {
       await AuthApi.resendConfirmation(email);
-      setSuccess("Link de confirmação reenviado! Verifique seu email.");
+      setSuccess("Confirmation link resent! Check your email.");
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -41,9 +41,9 @@ const ConfirmEmail = () => {
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary/20">
             <MailCheck className="h-7 w-7 text-primary" />
           </div>
-          <CardTitle className="text-2xl">Confirmar Email</CardTitle>
+          <CardTitle className="text-2xl">Confirm Email</CardTitle>
           <CardDescription>
-            Verifique seu email e clique no link de confirmação enviado
+            Check your email and click the confirmation link sent
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -55,7 +55,7 @@ const ConfirmEmail = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="seu@email.com"
+                placeholder="your@email.com"
                 className="bg-muted/50"
                 disabled
               />
@@ -70,10 +70,10 @@ const ConfirmEmail = () => {
               disabled={resending}
             >
               <RefreshCw className={`h-4 w-4 ${resending ? "animate-spin" : ""}`} />
-              {resending ? "Reenviando..." : "Reenviar link de confirmação"}
+              {resending ? "Resending..." : "Resend confirmation link"}
             </Button>
             <Button asChild className="w-full">
-              <Link to="/login">Ir para Login</Link>
+              <Link to="/login">Go to Login</Link>
             </Button>
           </div>
         </CardContent>

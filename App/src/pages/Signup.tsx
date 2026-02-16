@@ -22,7 +22,7 @@ const Signup = () => {
     e.preventDefault();
     setError("");
     if (password !== confirmPassword) {
-      setError("Senhas não coincidem");
+      setError("Passwords do not match");
       return;
     }
     setLoading(true);
@@ -45,8 +45,8 @@ const Signup = () => {
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary/20">
             <UserPlus className="h-7 w-7 text-primary" />
           </div>
-          <CardTitle className="text-2xl">Criar Conta</CardTitle>
-          <CardDescription>Registre-se para começar a organizar suas tarefas</CardDescription>
+          <CardTitle className="text-2xl">Create Account</CardTitle>
+          <CardDescription>Sign up to start organizing your tasks</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -57,13 +57,13 @@ const Signup = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="seu@email.com"
+                placeholder="your@email.com"
                 className="bg-muted/50"
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
+              <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -75,7 +75,7 @@ const Signup = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirmar Senha</Label>
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
               <Input
                 id="confirmPassword"
                 type="password"
@@ -88,12 +88,12 @@ const Signup = () => {
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Criando..." : "Criar Conta"}
+              {loading ? "Creating..." : "Create Account"}
             </Button>
             <p className="text-center text-sm text-muted-foreground">
-              Já tem conta?{" "}
+              Already have an account?{" "}
               <Link to="/login" className="text-primary hover:underline">
-                Entrar
+                Sign In
               </Link>
             </p>
           </form>

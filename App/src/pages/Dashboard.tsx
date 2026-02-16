@@ -58,7 +58,7 @@ const Dashboard = () => {
       if (selectedListId === null && all.length > 0)
         setSelectedListId(all[0].id);
     } catch (error) {
-      console.error("Erro ao carregar listas:", error);
+      console.error("Error loading lists:", error);
     }
   };
 
@@ -68,7 +68,7 @@ const Dashboard = () => {
       const allItems = await taskItemApi.getAll();
       setItems(allItems.filter((item) => item.taskListId === selectedListId));
     } catch (error) {
-      console.error("Erro ao carregar tarefas:", error);
+      console.error("Error loading tasks:", error);
     }
   };
 
@@ -80,7 +80,7 @@ const Dashboard = () => {
       setNewListName("");
       await refreshLists();
     } catch (error) {
-      console.error("Erro ao criar lista:", error);
+      console.error("Error creating list:", error);
     }
   };
 
@@ -91,7 +91,7 @@ const Dashboard = () => {
       setEditingListId(null);
       await refreshLists();
     } catch (error) {
-      console.error("Erro ao atualizar lista:", error);
+      console.error("Error updating list:", error);
     }
   };
 
@@ -101,7 +101,7 @@ const Dashboard = () => {
       if (selectedListId === id) setSelectedListId(null);
       await refreshLists();
     } catch (error) {
-      console.error("Erro ao deletar lista:", error);
+      console.error("Error deleting list:", error);
     }
   };
 
@@ -116,7 +116,7 @@ const Dashboard = () => {
       setNewItemDesc("");
       await refreshItems();
     } catch (error) {
-      console.error("Erro ao criar tarefa:", error);
+      console.error("Error creating task:", error);
     }
   };
 
@@ -128,7 +128,7 @@ const Dashboard = () => {
       });
       await refreshItems();
     } catch (error) {
-      console.error("Erro ao atualizar tarefa:", error);
+      console.error("Error updating task:", error);
     }
   };
 
@@ -143,7 +143,7 @@ const Dashboard = () => {
       setEditingItemId(null);
       await refreshItems();
     } catch (error) {
-      console.error("Erro ao atualizar tarefa:", error);
+      console.error("Error updating task:", error);
     }
   };
 
@@ -152,7 +152,7 @@ const Dashboard = () => {
       await taskItemApi.delete(id);
       await refreshItems();
     } catch (error) {
-      console.error("Erro ao deletar tarefa:", error);
+      console.error("Error deleting task:", error);
     }
   };
 
@@ -184,7 +184,7 @@ const Dashboard = () => {
               handleLogout();
             }}
           >
-            <LogOut className="mr-1 h-4 w-4" /> Sair
+            <LogOut className="mr-1 h-4 w-4" /> Logout
           </Button>
         </div>
       </header>
@@ -194,14 +194,14 @@ const Dashboard = () => {
         <aside className="flex w-64 shrink-0 flex-col border-r border-border/50 bg-sidebar">
           <div className="p-4">
             <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Listas
+              Lists
             </h2>
             <div className="flex gap-2">
               <Input
                 value={newListName}
                 onChange={(e) => setNewListName(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && addList()}
-                placeholder="Nova lista..."
+                placeholder="New list..."
                 className="h-8 bg-muted/50 text-sm"
               />
               <Button size="sm" className="h-8 px-2" onClick={addList}>
@@ -298,11 +298,11 @@ const Dashboard = () => {
                   value={newItemDesc}
                   onChange={(e) => setNewItemDesc(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && addItem()}
-                  placeholder="Adicionar tarefa..."
+                  placeholder="Add task..."
                   className="bg-muted/50"
                 />
                 <Button onClick={addItem}>
-                  <Plus className="mr-1 h-4 w-4" /> Adicionar
+                  <Plus className="mr-1 h-4 w-4" /> Add
                 </Button>
               </div>
 
@@ -310,7 +310,7 @@ const Dashboard = () => {
               <div className="flex-1 space-y-2 overflow-y-auto">
                 {items.length === 0 && (
                   <p className="py-8 text-center text-muted-foreground">
-                    Nenhuma tarefa nesta lista
+                    No tasks in this list
                   </p>
                 )}
                 {items.map((item) => (
@@ -380,7 +380,7 @@ const Dashboard = () => {
           ) : (
             <div className="flex flex-1 items-center justify-center">
               <p className="text-muted-foreground">
-                Selecione ou crie uma lista para começar
+                Select or create a list to get started
               </p>
             </div>
           )}
