@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { taskListApi, taskItemApi } from "@/services/mockApi";
+import { taskListApi } from "@/services/taskList.api";
 import type { TaskList, TaskItem } from "@/types/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,7 @@ import {
   ListTodo,
   ChevronRight,
 } from "lucide-react";
+import { taskItemApi } from "@/services/taskItem.api";
 
 const Dashboard = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -46,75 +47,113 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (selectedListId !== null) {
-      setItems(taskItemApi.getByListId(selectedListId));
+      refreshItems();
     }
   }, [selectedListId]);
 
-  const refreshLists = () => {
-    const all = taskListApi.getAll();
-    setLists(all);
-    if (selectedListId === null && all.length > 0) setSelectedListId(all[0].id);
+  const refreshLists = async () => {
+    try {
+      const all = await taskListApi.getAll();
+      setLists(all);
+      if (selectedListId === null && all.length > 0)
+        setSelectedListId(all[0].id);
+    } catch (error) {
+      console.error("Erro ao carregar listas:", error);
+    }
   };
 
-  const refreshItems = () => {
-    if (selectedListId !== null)
-      setItems(taskItemApi.getByListId(selectedListId));
+  const refreshItems = async () => {
+    if (selectedListId === null) return;
+    try {
+      const allItems = await taskItemApi.getAll();
+      setItems(allItems.filter((item) => item.taskListId === selectedListId));
+    } catch (error) {
+      console.error("Erro ao carregar tarefas:", error);
+    }
   };
 
   // List CRUD
-  const addList = () => {
+  const addList = async () => {
     if (!newListName.trim()) return;
-    taskListApi.create({ name: newListName.trim(), userId: user!.id });
-    setNewListName("");
-    refreshLists();
+    try {
+      await taskListApi.create({ name: newListName.trim(), userId: user!.id });
+      setNewListName("");
+      await refreshLists();
+    } catch (error) {
+      console.error("Erro ao criar lista:", error);
+    }
   };
 
-  const saveListName = (id: number) => {
+  const saveListName = async (id: number) => {
     if (!editingListName.trim()) return;
-    taskListApi.update(id, { name: editingListName.trim() });
-    setEditingListId(null);
-    refreshLists();
+    try {
+      await taskListApi.update(id, { name: editingListName.trim() });
+      setEditingListId(null);
+      await refreshLists();
+    } catch (error) {
+      console.error("Erro ao atualizar lista:", error);
+    }
   };
 
-  const deleteList = (id: number) => {
-    taskListApi.delete(id);
-    if (selectedListId === id) setSelectedListId(null);
-    refreshLists();
+  const deleteList = async (id: number) => {
+    try {
+      await taskListApi.delete(id);
+      if (selectedListId === id) setSelectedListId(null);
+      await refreshLists();
+    } catch (error) {
+      console.error("Erro ao deletar lista:", error);
+    }
   };
 
   // Item CRUD
-  const addItem = () => {
+  const addItem = async () => {
     if (!newItemDesc.trim() || selectedListId === null) return;
-    taskItemApi.create({
-      description: newItemDesc.trim(),
-      taskListId: selectedListId,
-    });
-    setNewItemDesc("");
-    refreshItems();
+    try {
+      await taskItemApi.create({
+        description: newItemDesc.trim(),
+        taskListId: selectedListId,
+      });
+      setNewItemDesc("");
+      await refreshItems();
+    } catch (error) {
+      console.error("Erro ao criar tarefa:", error);
+    }
   };
 
-  const toggleItem = (item: TaskItem) => {
-    taskItemApi.update(item.id, {
-      description: item.description,
-      status: item.status === 0 ? 1 : 0,
-    });
-    refreshItems();
+  const toggleItem = async (item: TaskItem) => {
+    try {
+      await taskItemApi.update(item.id, {
+        description: item.description,
+        status: item.status === 0 ? 1 : 0,
+      });
+      await refreshItems();
+    } catch (error) {
+      console.error("Erro ao atualizar tarefa:", error);
+    }
   };
 
-  const saveItemDesc = (id: number) => {
+  const saveItemDesc = async (id: number) => {
     const item = items.find((i) => i.id === id);
     if (!item || !editingItemDesc.trim()) return;
-    taskItemApi.update(id, {
-      description: editingItemDesc.trim(),
-      status: item.status,
-    });
-    setEditingItemId(null);
-    refreshItems();
+    try {
+      await taskItemApi.update(id, {
+        description: editingItemDesc.trim(),
+        status: item.status,
+      });
+      setEditingItemId(null);
+      await refreshItems();
+    } catch (error) {
+      console.error("Erro ao atualizar tarefa:", error);
+    }
   };
 
-  const deleteItem = (id: number) => {
-    taskItemApi.delete(id);
-    refreshItems();
+  const deleteItem = async (id: number) => {
+    try {
+      await taskItemApi.delete(id);
+      await refreshItems();
+    } catch (error) {
+      console.error("Erro ao deletar tarefa:", error);
+    }
   };
 
   const handleLogout = () => {
