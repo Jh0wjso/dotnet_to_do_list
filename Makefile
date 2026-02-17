@@ -1,7 +1,13 @@
 .PHONY: setup-backend setup-frontend start-backend start-frontend start-app kill-ports
 
+build-backend:
+	@echo "Building backend..."
+	cd ToDoList.Api && dotnet build
+	dotnet tool install --global dotnet-ef
+
 setup-backend:
 	@echo "Setting up backend..."
+	@make build-backend
 	cd ToDoList.Api && dotnet restore
 	cd ToDoList.Api && dotnet ef database update
 
