@@ -8,6 +8,7 @@ import Signup from "./pages/Signup";
 import ConfirmEmail from "./pages/ConfirmEmail";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
+import { Analytics } from "@vercel/analytics/react"
 
 const queryClient = new QueryClient();
 const user = localStorage.getItem("todo_user");
@@ -42,6 +43,7 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
+    <Analytics />
   </QueryClientProvider>
 );
 
