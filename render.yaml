@@ -19,3 +19,5 @@ services:
         sync: false
       - key: API_URL
         sync: false
+      - key: APP_URL
+        sync: false

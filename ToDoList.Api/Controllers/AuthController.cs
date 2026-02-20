@@ -81,7 +81,8 @@ namespace ToDoList.Api.Controllers
                 return BadRequest("Invalid or expired token");
 
             await Task.Delay(1000);
-            return Redirect($"{_configuration["APP_URL"]}/login");
+            var appUrl = Environment.GetEnvironmentVariable("APP_URL") ?? _configuration["APP_URL"];
+            return Redirect($"{appUrl}/login");
         }
 
         [HttpPost("resend-confirmation")]
@@ -100,7 +101,8 @@ namespace ToDoList.Api.Controllers
 
         private string GenerateJwtToken(User user)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+            var jwtKey = Environment.GetEnvironmentVariable("JWT_SECRET") ?? _configuration["Jwt:Key"];
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
@@ -109,9 +111,12 @@ namespace ToDoList.Api.Controllers
                 new Claim(ClaimTypes.Email, user.Email)
             };
 
+            var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? _configuration["Jwt:Issuer"];
+            var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? _configuration["Jwt:Audience"];
+
             var token = new JwtSecurityToken(
-                issuer: _configuration["Jwt:Issuer"],
-                audience: _configuration["Jwt:Audience"],
+                issuer: jwtIssuer,
+                audience: jwtAudience,
                 claims: claims,
                 expires: DateTime.UtcNow.AddHours(24),
                 signingCredentials: credentials
