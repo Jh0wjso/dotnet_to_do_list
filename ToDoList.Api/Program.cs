@@ -40,6 +40,13 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// Run migrations on startup
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -48,11 +55,14 @@ if (app.Environment.IsDevelopment())
 
 //CORS setup
 app.UseCors(policy =>
-    policy.WithOrigins("*")
+    policy.WithOrigins(
+            "http://localhost:5173",
+            "http://localhost:8080",
+            "https://dotnet-to-do-list.vercel.app")
             .AllowAnyHeader()
-            .AllowAnyMethod());
+            .AllowAnyMethod()
+            .AllowCredentials());
 
-app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
