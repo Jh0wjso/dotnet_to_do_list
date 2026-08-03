@@ -1,4 +1,4 @@
-.PHONY: setup-backend setup-frontend start-backend start-frontend start-app kill-ports
+.PHONY: setup-backend setup-frontend start-backend start-frontend start-app kill-ports k8s-logs k8s-logs-follow k8s-teardown
 
 build-backend:
 	@echo "Building backend..."
@@ -31,3 +31,12 @@ start-frontend:
 start-app: kill-ports
 	@echo "Starting application..."
 	@make start-backend & make start-frontend
+
+k8s-logs:
+	@kubectl logs -n todo -l app=todo-api --all-containers
+
+k8s-logs-follow:
+	@kubectl logs -n todo -l app=todo-api --all-containers -f
+
+k8s-teardown:
+	@kubectl delete namespace todo
